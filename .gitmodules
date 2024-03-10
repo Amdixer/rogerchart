@@ -1,0 +1,3 @@
+[submodule "echarts"]
+	path = echarts
+	url = https://github.com/apache/echarts.git
