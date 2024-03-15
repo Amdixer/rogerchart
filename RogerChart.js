@@ -1,22 +1,79 @@
-<html><script src="echarts.min.js"></script>
 
+var colours = ["#FF0000","#00FF00","#0000FF","#0F0F0F","#FF0000","#00FF00","#0000FF","#0F0F0F","#FF0000","#00FF00","#0000FF","#0F0F0F"]
+var i = 0;
 
-var opts   = [];
-var charts = []
+function createPlotDiv(){
+    let div = document.createElement("div");
+    document.getElementById("main").appendChild(div);
 
-function createCharts(options){
-    var vw = int(100/len(self.axes[0]))
-    var vh = int(max(50,100/len(self.axes)))
+    div.style.width  = "100%";
+    div.style.height = "100%";
+    div.style.margin = '0';
+    div.style.padding = '0';
+    // div.style.backgroundColor = colours[i];
+    // div.innerHTML = "TEST123";
+    i++;
+    return div;
 
-    for(o in options){
-        let opt = JSON.parse(options[o]);
-        opts.push(opt);
-        var dom =
-        PAGE += f"var option_{i}{j} = JSON.parse('{b.to_html()}');"
-        PAGE += f'var chartDom_{i}{j} = document.getElementById("row_{i}_col_{j}");'
-        PAGE += f'var chart_{i}{j}  = echarts.init(chartDom_{i}{j},"vintage");'
-        PAGE += f'chart_{i}{j}.setOption(option_{i}{j});'
-        PAGE += f'window.addEventListener("resize", function () {{chart_{i}{j}.resize();}});'
-
-    }
 }
+
+
+function createPage(){
+    //Setup the main div.
+    let mainDiv = document.getElementById("main");
+    mainDiv.style.width  = '100vw';
+    mainDiv.style.height = '100vh';
+    mainDiv.style.display = 'grid';
+    mainDiv.style.margin = '0';
+    mainDiv.style.padding = '0';
+
+    //Determine how many rows and columns there are.
+    var Rows = 0;
+    var Cols = 0;
+    var templateCols    = "";
+    var templateRows    = "";
+
+    Rows = page_shape.length;
+    Cols = page_shape[0].length;
+
+    // for (row in page_shape){
+    //     for (col in page_shape[row]){
+    //         createPlotDiv();
+    //     }
+    // }
+
+    //Set up the grid.
+    for (var row = 0; row < Rows; row++){
+        if(Rows === 1){
+            templateRows += "100% ";
+        }
+        else{
+            templateRows += "50% ";
+        }
+    }
+    for (var col = 0; col < Cols; col++){
+        templateCols += String(Math.floor(100/Cols)) + "% ";
+    }
+
+    mainDiv.style.gridTemplateColumns = templateCols;
+    mainDiv.style.gridTemplateRows = templateRows;
+
+
+    for (p in raw_plot_options){
+        console.log(p);
+        var o    = JSON.parse(raw_plot_options[p]);
+        plot_options.push(o);
+
+        var chart = echarts.init(createPlotDiv());
+        chart.setOption(o); 
+        charts.push(chart);
+    }
+
+    window.addEventListener("resize", function () {
+        for (c in charts){
+            charts[c].resize();
+        }
+    });   
+}
+
+createPage();

@@ -3,7 +3,7 @@ import webbrowser
 import json
 from shutil import copy
 MOD_PATH = os.path.dirname(os.path.realpath(__file__))
-ECHARTS_PATH = os.path.abspath(os.path.join(MOD_PATH,"../echarts/dist"))
+ECHARTS_PATH = os.path.abspath(os.path.join(MOD_PATH,"./echarts/dist"))
 THEMES_PATH  = os.path.abspath(os.path.join(MOD_PATH, "themes"))
 
 class RogerAxes():
@@ -85,45 +85,36 @@ class RogerAxes():
 
 class RogerFigure():
     def __init__(self, grid=(1, 1)):
-        self.axes = [[RogerAxes() for h in range(grid[1])] for g in range(grid[0])]
+        self._xsize = grid[0]
+        self._ysize = grid[1]
+        self.axes = [RogerAxes() for h in range(grid[1]*grid[0])]
 
     def to_html(self, name="Test"):
         if not os.path.isdir(name):
             os.mkdir(name)
 
-        vw = int(100/len(self.axes[0]))
-        vh = int(max(50,100/len(self.axes))) #Cap to 50%.
+        PAGE = "<html>\n"
+        PAGE += "<div id='main'></div>\n"
+        PAGE += "<script src='echarts.min.js'></script>\n"
+        PAGE += "<script>\n"
+        PAGE += f"var raw_plot_options        = {[x.to_html() for x in self.axes]};\n"
+        PAGE += f"var page_shape          = {[[1 for y in range(self._ysize)] for x in range(self._xsize)]};\n"
+        PAGE += "var plot_options = [];\n"
+        PAGE += "var charts = [];\n"
+        PAGE += "</script>\n"
+        PAGE += "<script src='RogerChart.js'></script>\n"
+        PAGE += "</html>"
 
-        PAGE = "<html>"
-        PAGE += '<script src="echarts.min.js"></script>'
+
         for theme in os.listdir(THEMES_PATH):
             copy(os.path.join(THEMES_PATH,theme),f"{name}/")
             PAGE += f"<script src={theme}></script>"
-
-
-        PAGE += f"<div id='main' style='width:100vw;height:100vh;display: grid; grid-template-columns: {' '.join([str(vw)+'%' for i in range(len(self.axes[0]))])};grid-template-rows:{' '.join([f'{vh}%' for i in range(len(self.axes))])};'>"
-        for i,a in enumerate(self.axes):
-            # PAGE += f"<div id = 'row_{i}' style='width:100%;height:{vh}%;'>"
-            for j,b in enumerate(a):
-                PAGE += f"<div id = 'row_{i}_col_{j}' style='width:100%;height:100%;'></div>"
-            # PAGE += "</div>"
-        PAGE += '</div>'
-
-        PAGE += "<script>"
-
-        for i,a in enumerate(self.axes):
-            for j,b in enumerate(a):
-                PAGE += f"var option_{i}{j} = JSON.parse('{b.to_html()}');"
-                PAGE += f'var chartDom_{i}{j} = document.getElementById("row_{i}_col_{j}");'
-                PAGE += f'var chart_{i}{j}  = echarts.init(chartDom_{i}{j},"vintage");'
-                PAGE += f'chart_{i}{j}.setOption(option_{i}{j});'
-                PAGE += f'window.addEventListener("resize", function () {{chart_{i}{j}.resize();}});'
-        PAGE += "</script></html>"
 
         with open(f"{name}/{name}.html", 'w+') as f:
             f.write(PAGE)
 
         copy(os.path.join(ECHARTS_PATH,"echarts.min.js"),f"{name}/")
+        copy(os.path.join(MOD_PATH,"RogerChart.js"),f"{name}/")
         webbrowser.get().open("file://" + os.path.abspath(f"{name}/{name}.html"))
         return 1
 
