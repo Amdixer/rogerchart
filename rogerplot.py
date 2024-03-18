@@ -91,20 +91,20 @@ class RogerFigure():
         self.axes = [RogerAxes() for h in range(grid[0]*grid[1])]
 
     def to_html(self, name="Test", onefile=True):
-        with open(os.path.join(MOD_PATH,"assets","rogerchart_base.html")) as f:
+        with open(os.path.join(MOD_PATH,"assets","rogerplot_base.html")) as f:
             PAGE = "".join(f.readlines())
         
         PAGE = PAGE.replace("##PLOT_OPTS##",str([x.to_html() for x in self.axes]))
         PAGE = PAGE.replace("##PAGESHAPE##",str([[1 for y in range(self._ysize)] for x in range(self._xsize)]))
         
 
-        # Insert echarts & rogerchart javascript.
+        # Insert echarts & rogerplot javascript.
         if onefile:
             with open(os.path.join(ECHARTS_PATH,"echarts.min.js")) as f:
                 echarts     = "".join(f.readlines())
-            with open(os.path.join(MOD_PATH,"RogerChart.js")) as f:
-                rogerchart  = "".join(f.readlines())
-            PAGE = PAGE.replace("##ROGERCHART_SCRIPT##",f"<script>{rogerchart}</script>")
+            with open(os.path.join(MOD_PATH,"rogerplot.js")) as f:
+                rogerplot  = "".join(f.readlines())
+            PAGE = PAGE.replace("##ROGERPLOT_SCRIPT##",f"<script>{rogerplot}</script>")
             PAGE = PAGE.replace("##ECHARTS_SCRIPT##",f"<script>{echarts}</script>")
             with open(f"{name}.html", 'w+') as f:
                 f.write(PAGE)
@@ -114,7 +114,7 @@ class RogerFigure():
             if not os.path.isdir(name):
                 os.mkdir(name)
             PAGE = PAGE.replace("##ECHARTS_SCRIPT##",f"<script src='echarts.min.js'></script>")
-            PAGE = PAGE.replace("##ROGERCHART_SCRIPT##",f"<script src='RogerChart.js'></script>")
+            PAGE = PAGE.replace("##ROGERPLOT_SCRIPT##",f"<script src='rogerplot.js'></script>")
             copy(os.path.join(ECHARTS_PATH,"echarts.min.js"),f"{name}/")
             with open(f"{name}/{name}.html", 'w+') as f:
                 f.write(PAGE)
