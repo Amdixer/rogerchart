@@ -1,7 +1,9 @@
 /**
  * Rogier Colijn - 03-2024
  *
- * long description for the file
+ * Javascript component of RogerPlot. This component is appended
+ * to the template file and configures it from there based on
+ * the inserted plot option parameters and grid shape.
  *
  * @summary Main JS class for RogerPlot
  * @author Rogier Colijn
