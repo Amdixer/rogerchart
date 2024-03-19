@@ -1,5 +1,4 @@
-
-![RogerPlotLogo](https://github.com/Amdixer/rogerchart/assets/15040680/20a176db-9bf3-438d-b52f-a96ae61c9f65)
+![RogerPlot_Logo_WB](https://github.com/Amdixer/rogerplot/assets/15040680/4f4b2b3f-b449-463b-88c0-9de54195a86a)
 
 # RogerPlot
 RogerPlot is a python based plotting library that creates output in the form of all-in-one HTML files. The purpose of RogerPlot is
